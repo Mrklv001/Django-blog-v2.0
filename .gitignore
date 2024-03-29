@@ -1,3 +1,4 @@
 # created by virtualenv automatically
 .venv/bin
 .DS_Store
+media/
