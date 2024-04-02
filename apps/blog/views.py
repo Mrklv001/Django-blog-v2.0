@@ -15,6 +15,8 @@ from .forms import CommentCreateForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Comment
 from taggit.models import Tag
+from .models import Rating
+
 
 class ProductList(View):
 
@@ -172,3 +174,32 @@ class PostByTagListView(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Статьи по тегу: {self.tag.name}'
         return context
+
+
+class RatingCreateView(View):
+    model = Rating
+
+    def post(self, request, *args, **kwargs):
+        post_id = request.POST.get('post_id')
+        value = int(request.POST.get('value'))
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        ip = x_forwarded_for.split(',')[0] if x_forwarded_for else request.META.get('REMOTE_ADDR')
+        ip_address = ip
+        user = request.user if request.user.is_authenticated else None
+
+        rating, created = self.model.objects.get_or_create(
+            post_id=post_id,
+            ip_address=ip_address,
+            defaults={'value': value, 'user': user},
+        )
+
+        if not created:
+            if rating.value == value:
+                rating.delete()
+                return JsonResponse({'status': 'deleted', 'rating_sum': rating.post.get_sum_rating()})
+            else:
+                rating.value = value
+                rating.user = user
+                rating.save()
+                return JsonResponse({'status': 'updated', 'rating_sum': rating.post.get_sum_rating()})
+        return JsonResponse({'status': 'created', 'rating_sum': rating.post.get_sum_rating()})

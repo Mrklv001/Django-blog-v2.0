@@ -1,27 +1,18 @@
 from django import forms
 from .models import Post
 from .models import Comment
+from ckeditor.widgets import CKEditorWidget
 
 
 class PostCreateForm(forms.ModelForm):
     """
     Форма добавления статей на сайте
     """
+    title = forms.CharField(widget=CKEditorWidget(config_name='awesome_ckeditor'))
 
     class Meta:
         model = Post
-        fields = ('title', 'category', 'description', 'text', 'thumbnail', 'status')
-
-    def __init__(self, *args, **kwargs):
-        """
-        Обновление стилей формы под Bootstrap
-        """
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control',
-                'autocomplete': 'off'
-            })
+        fields = ('title', 'slug', 'category', 'description', 'text', 'thumbnail', 'status')
 
 
 class PostUpdateForm(PostCreateForm):
@@ -55,5 +46,3 @@ class CommentCreateForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('content',)
-
-

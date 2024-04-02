@@ -10,8 +10,8 @@
 		<div class="col-8">
 			<div class="card-body">
 				<h5>{{ post.title }}</h5>
-                <p class="card-text">{{ post.description }}</p>
-				<p class="card-text">{{ post.text }}</p>
+                <p class="card-text">{{ post.description|safe }}</p>
+				<p class="card-text">{{ post.text|safe }}</p>
 				Категория: <a href="{% url 'post_by_category' post.category.slug %}">{{ post.category.title }}</a> / Добавил: {{ post.author.username }} / <small>{{ post.time_create }}</small>
 			</div>
 		</div>
@@ -21,6 +21,12 @@
 		Теги записи: {% for tag in post.tags.all %} <a href="{% url 'post_by_tags' tag.slug %}">{{ tag }}</a>, {% endfor %}
 	</div>
 	{% endif %}
+                <div class="rating-buttons">
+                    <button class="btn btn-sm btn-primary" data-post="{{ post.id }}" data-value="1">Лайк</button>
+                    <button class="btn btn-sm btn-secondary" data-post="{{ post.id }}" data-value="-1">Дизлайк
+                    </button>
+                    <button class="btn btn-sm btn-secondary rating-sum">{{ post.get_sum_rating }}</button>
+                </div>
 </div>
 <div class="card border-0">
 	<div class="card-body">
@@ -30,4 +36,6 @@
 		{% include 'blog/comments/comments_list.html' %}
 	</div>
 </div>
+        <script src="{% static 'ratings.js' %}"></script>
+{% block script %}{% endblock %}
 {% endblock %}

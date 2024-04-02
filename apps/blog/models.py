@@ -5,6 +5,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django.urls import reverse
 from apps.services.utils import unique_slugify
 from taggit.managers import TaggableManager
+from ckeditor.fields import RichTextField
 
 
 class PostManager(models.Manager):
@@ -32,8 +33,8 @@ class Post(models.Model):
     title = models.CharField(verbose_name='Название записи', max_length=255)
     slug = models.SlugField(verbose_name='URL', max_length=255, blank=True)
     tags = TaggableManager()
-    description = models.TextField(verbose_name='Краткое описание', max_length=500)
-    text = models.TextField(verbose_name='Полный текст записи')
+    description = RichTextField(config_name='awesome_ckeditor', verbose_name='Краткое описание', max_length=500)
+    text = RichTextField(config_name='awesome_ckeditor', verbose_name='Полный текст записи')
     category = TreeForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name='Категория')
     thumbnail = models.ImageField(default='default.jpg',
                                   verbose_name='Изображение записи',
@@ -75,6 +76,9 @@ class Post(models.Model):
         """
         self.slug = unique_slugify(self, self.title)
         super().save(*args, **kwargs)
+
+    def get_sum_rating(self):
+        return sum([rating.value for rating in self.ratings.all()])
 
 
 class Category(MPTTModel):
@@ -157,3 +161,24 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return f'{self.author}:{self.content}'
+
+
+class Rating(models.Model):
+    """
+    Модель рейтинга: Лайк - Дизлайк
+    """
+    post = models.ForeignKey(to=Post, verbose_name='Запись', on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(to=User, verbose_name='Пользователь', on_delete=models.CASCADE, blank=True, null=True)
+    value = models.IntegerField(verbose_name='Значение', choices=[(1, 'Нравится'), (-1, 'Не нравится')])
+    time_create = models.DateTimeField(verbose_name='Время добавления', auto_now_add=True)
+    ip_address = models.GenericIPAddressField(verbose_name='IP Адрес')
+
+    class Meta:
+        unique_together = ('post', 'ip_address')
+        ordering = ('-time_create',)
+        indexes = [models.Index(fields=['-time_create', 'value'])]
+        verbose_name = 'Рейтинг'
+        verbose_name_plural = 'Рейтинги'
+
+    def __str__(self):
+        return self.post.title

@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'apps.accounts',
     'taggit',
     'django_recaptcha',
+    'ckeditor_uploader',
+    'ckeditor',
+    # 'django_ckeditor_5',
 ]
 
 MIDDLEWARE = [
@@ -128,13 +131,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Добавление статики и медифайлов
 STATIC_URL = '/static/'
-STATIC_ROOT = (BASE_DIR / 'static')
+STATIC_ROOT = BASE_DIR / 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'templates/js/']
 
 MEDIA_ROOT = (BASE_DIR / 'media')
 MEDIA_URL = '/media/'
 
-
 #  ReCAPTCHA
 RECAPTCHA_PUBLIC_KEY = '6LcZAqwpAAAAAFe0RJfjKVWk8mfXoeskO4MyT1BX'
 RECAPTCHA_PRIVATE_KEY = '6LcZAqwpAAAAADrsnzsc-_vRssPMxWnjzq3Ku52q'
+
+# CKEDITOR
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    'awesome_ckeditor': {
+        'toolbar': 'full',
+        'height': 300,
+    },
+}
