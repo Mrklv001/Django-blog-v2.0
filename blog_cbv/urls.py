@@ -20,6 +20,10 @@ from django.conf.urls.static import static
 from django.conf import settings
 from apps.blog.feeds import LatestPostFeed
 
+handler403 = 'apps.blog.views.tr_handler403'
+handler404 = 'apps.blog.views.tr_handler404'
+handler500 = 'apps.blog.views.tr_handler500'
+
 urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('admin/', admin.site.urls),
