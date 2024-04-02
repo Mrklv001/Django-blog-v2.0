@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'apps.accounts.middleware.ActiveUserMiddleware',
 ]
 
 ROOT_URLCONF = 'blog_cbv.urls'
@@ -148,4 +149,12 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'full',
         'height': 300,
     },
+}
+
+# Добавление кеша
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': (BASE_DIR / 'cache'),
+    }
 }
