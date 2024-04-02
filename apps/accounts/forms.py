@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
 from django.contrib.auth.forms import AuthenticationForm
+from django_recaptcha.fields import ReCaptchaField
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -103,3 +104,26 @@ class UserLoginForm(AuthenticationForm):
                 'class': 'form-control',
                 'autocomplete': 'off'
             })
+
+
+class UserLoginForm(AuthenticationForm):
+    """
+    Форма авторизации на сайте
+    """
+
+    recaptcha = ReCaptchaField()
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'recaptcha']
+
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы регистрации
+        """
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['placeholder'] = 'Логин пользователя'
+        self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['password'].widget.attrs['placeholder'] = 'Пароль пользователя'
+        self.fields['password'].widget.attrs['class'] = 'form-control'
+        self.fields['username'].label = 'Логин'
