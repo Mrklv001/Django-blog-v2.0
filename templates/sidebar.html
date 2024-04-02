@@ -6,16 +6,13 @@
         {% full_tree_for_model blog.Category as categories %}
         <ul>
             {% recursetree categories %}
-            <li>
-                <a href="{{ node.get_absolute_url }}">{{ node.title }}</a>
-            </li>
-
-            {% if not node.is_leaf_node %}
-            <ul>{% endif %}
-                {{ children }}
+                <li>
+                    <a href="{{ node.get_absolute_url }}">{{ node.title }}</a>
+                </li>
                 {% if not node.is_leaf_node %}
-            </ul>
-            {% endif %}
+                    <ul>{% endif %}
+            {{ children }}
+            {% if not node.is_leaf_node %}</ul>{% endif %}
             {% endrecursetree %}
         </ul>
     </div>

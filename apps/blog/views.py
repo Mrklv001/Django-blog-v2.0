@@ -1,6 +1,5 @@
 from django.views.generic import View
 from django.shortcuts import render
-# from .models import Product
 from django.views.generic import ListView, DetailView
 from .models import Post, Category
 from django.views.generic import CreateView
@@ -13,20 +12,8 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from .forms import CommentCreateForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Comment
 from taggit.models import Tag
 from .models import Rating
-
-
-class ProductList(View):
-
-    def get(self, request, *args, **kwargs):
-        products = Product.objects.all()
-        context = {'products': products}
-        return render(request, 'base/product_list.html', context)
-
-    def post(self, request, *args, **kwargs):
-        pass
 
 
 class PostListView(ListView):
@@ -40,13 +27,6 @@ class PostListView(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная страница'
         return context
-
-
-class Product(View):
-    def get(self, request, *args, **kwargs):
-        product = get_object_or_404(Product, pk=kwargs['pk'])
-        context = {'product': product}
-        return render(request, 'base/products_detail.html', context)
 
 
 class PostDetailView(DetailView):
